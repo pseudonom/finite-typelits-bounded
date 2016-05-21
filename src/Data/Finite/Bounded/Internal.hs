@@ -8,7 +8,7 @@
 -- Portability :  portable
 --------------------------------------------------------------------------------
 {-# LANGUAGE KindSignatures, DataKinds #-}
-module Data.Finite.Internal
+module Data.Finite.Bounded.Internal
     (
         Finite(Finite)
     )

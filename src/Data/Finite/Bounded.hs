@@ -7,8 +7,8 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --------------------------------------------------------------------------------
-{-# LANGUAGE TypeOperators, DataKinds, TypeFamilies, FlexibleContexts #-}
-module Data.Finite
+{-# LANGUAGE TypeOperators, DataKinds, TypeFamilies, FlexibleContexts, ScopedTypeVariables #-}
+module Data.Finite.Bounded
     (
         Finite,
         packFinite, packFiniteProxy,
@@ -30,7 +30,7 @@ import Data.Maybe
 import Data.Ratio
 import GHC.TypeLits
 
-import Data.Finite.Internal (Finite(Finite))
+import Data.Finite.Bounded.Internal (Finite(Finite))
 
 -- | Convert an 'Integer' into a 'Finite', returning 'Nothing' if the input is out of bounds.
 packFinite :: KnownNat n => Integer -> Maybe (Finite n)
@@ -99,9 +99,9 @@ instance Show (Finite n) where
 
 -- | Modulo arithmetic. Only the 'fromInteger' function is supposed to be useful.
 instance KnownNat n => Num (Finite n) where
-    fx@(Finite x) + Finite y = Finite $ (x + y) `mod` natVal fx
-    fx@(Finite x) - Finite y = Finite $ (x - y) `mod` natVal fx
-    fx@(Finite x) * Finite y = Finite $ (x * y) `mod` natVal fx
+    fx@(Finite x) + Finite y = Finite $ min (x + y) (fromIntegral (maxBound :: Finite n))
+    fx@(Finite x) - Finite y = Finite $ max (x - y) (fromIntegral (minBound :: Finite n))
+    fx@(Finite x) * Finite y = Finite $ min (x * y) (fromIntegral (maxBound :: Finite n))
     abs fx = fx
     signum _ = fromInteger 1
     fromInteger x = result
